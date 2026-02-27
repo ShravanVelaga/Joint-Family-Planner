@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joint Family Planning Dashboard</title>
+    <title>Family Wealth Engine - Verified Logic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -19,7 +19,7 @@
         <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800/50 p-8 rounded-[2rem] border border-slate-700">
             <div>
                 <h1 class="text-3xl font-black tracking-tighter italic text-indigo-400 uppercase">Family Wealth Engine</h1>
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Joint Family Strategy • Multi-Member Tax Logic</p>
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Joint Family Strategy • Cash-Flow Logic (Non-Compounding Principal)</p>
             </div>
             <div class="mt-4 md:mt-0 flex gap-3 no-print">
                 <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-500 px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg">Export Report</button>
@@ -35,13 +35,12 @@
                         <h3 class="text-xs font-black uppercase text-slate-400 tracking-widest italic">1. Family Members (Salaries)</h3>
                         <button onclick="addMember()" class="no-print text-[10px] font-black text-indigo-400 uppercase underline">+ Add Member</button>
                     </div>
-                    <div id="memberList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        </div>
+                    <div id="memberList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
                 <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700 border-rose-900/30">
                     <label class="block text-[10px] font-black text-rose-500 uppercase mb-4 tracking-widest">Total Joint Family Expenses (Annual ₹)</label>
-                    <input type="text" id="exp" value="0" oninput="handleInput(this); calculate(); saveToLocal()" class="w-full bg-slate-900 border-2 border-slate-700 p-4 rounded-2xl font-black text-2xl text-rose-400 outline-none">
+                    <input type="text" id="exp" value="30,00,000" oninput="handleInput(this); calculate(); saveToLocal()" class="w-full bg-slate-900 border-2 border-slate-700 p-4 rounded-2xl font-black text-2xl text-rose-400 outline-none">
                 </div>
 
                 <div class="bg-slate-800 p-8 rounded-[2rem] border border-slate-700">
@@ -74,7 +73,7 @@
                     <h3 class="text-[10px] font-black uppercase text-indigo-400 tracking-widest">Wealth Strategy</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div><label class="text-[8px] text-slate-500 uppercase">SIP Returns %</label><input type="number" id="sipRet" value="12" oninput="calculate(); saveToLocal()" class="w-full bg-slate-900 p-2 rounded-xl text-indigo-300 font-bold border border-slate-700"></div>
-                        <div><label class="text-[8px] text-slate-500 uppercase">Inflation %</label><input type="number" id="infRet" value="5" oninput="calculate(); saveToLocal()" class="w-full bg-slate-900 p-2 rounded-xl text-rose-300 font-bold border border-slate-700"></div>
+                        <div><label class="text-[8px] text-slate-500 uppercase">Inflation %</label><input type="number" id="infRet" value="8" oninput="calculate(); saveToLocal()" class="w-full bg-slate-900 p-2 rounded-xl text-rose-300 font-bold border border-slate-700"></div>
                     </div>
                     <div class="pt-2">
                         <label class="text-[9px] font-black text-slate-400 uppercase italic">Reinvest Surplus: <span id="reinvestLabel">80%</span></label>
@@ -84,7 +83,7 @@
 
                 <div class="bg-slate-800 p-6 rounded-3xl border border-slate-700">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-widest">30-Year Forecast</h3>
+                        <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-widest">30-Year Forecast (Corrected Logic)</h3>
                         <label class="relative inline-flex items-center cursor-pointer no-print">
                             <input type="checkbox" id="adjToggle" class="sr-only peer" onchange="calculate(); saveToLocal()">
                             <div class="w-10 h-5 bg-slate-700 rounded-full peer-checked:bg-indigo-600 transition-all after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
@@ -170,7 +169,7 @@
                 netUI: row.querySelector('.m_net')
             }));
 
-            let totalPrincipal = 0, totalMatrixYield = 0;
+            let totalPrincipal = 0;
             document.querySelectorAll('.asset-row').forEach(row => {
                 const p = parseFloat(row.querySelector('.p_in').value.replace(/,/g, '')) || 0;
                 const y = parseFloat(row.querySelector('.y_in').value) || 0;
@@ -178,7 +177,6 @@
                 const m = members.find(m => m.name === o);
                 if (m) m.income += (p * y) / 100;
                 totalPrincipal += p;
-                totalMatrixYield += (p * y) / 100;
             });
 
             let totalNet = 0;
@@ -191,17 +189,23 @@
 
             const annualSurplus = totalNet - exp;
             const monthlySurplus = annualSurplus / 12;
-            const reinvestAmt = Math.max(0, monthlySurplus * reinvestRate);
+            const monthlySIP = Math.max(0, monthlySurplus * reinvestRate);
 
             document.getElementById('monthlySurplusDisplay').innerText = '₹' + Math.max(0, Math.round(monthlySurplus)).toLocaleString('en-IN');
             document.getElementById('yearlySurplusDisplay').innerText = '₹' + Math.max(0, Math.round(annualSurplus)).toLocaleString('en-IN');
 
-            let html = ""; const yrR = totalPrincipal > 0 ? (totalMatrixYield / totalPrincipal) : 0.07;
+            let html = "";
             [5, 10, 15, 20, 25, 30].forEach(yr => {
-                let val = totalPrincipal;
-                for (let i = 1; i <= yr; i++) { val = (val + (reinvestAmt * 12)) * (1 + Math.max(yrR, sipRet)); }
-                if (isAdj) val = val / Math.pow(1 + inf, yr);
-                html += `<div class="flex justify-between items-center py-2 border-b border-slate-700/50"><span class="text-[9px] font-bold text-slate-500 uppercase">${yr} Years</span><span class="text-sm font-black text-emerald-400">₹${Math.round(val/10000000).toLocaleString('en-IN')} Cr</span></div>`;
+                // CORRECTED LOGIC: Initial Principal is FIXED. Only monthlySIP compounds.
+                const r = sipRet / 12;
+                const n = yr * 12;
+                const fvSIP = monthlySIP * ((Math.pow(1 + r, n) - 1) / r) * (1 + r);
+                
+                let totalWealth = totalPrincipal + fvSIP;
+
+                if (isAdj) totalWealth = totalWealth / Math.pow(1 + inf, yr);
+                
+                html += `<div class="flex justify-between items-center py-2 border-b border-slate-700/50"><span class="text-[9px] font-bold text-slate-500 uppercase">${yr} Years</span><span class="text-sm font-black text-emerald-400">₹${Math.round(totalWealth/10000000).toLocaleString('en-IN')} Cr</span></div>`;
             });
             document.getElementById('forecastTable').innerHTML = html;
         }
@@ -221,14 +225,19 @@
 
         function loadFromLocal() {
             const saved = localStorage.getItem('family_wealth_v1');
-            if (!saved) { addMember("Shravan", 0); addMember("Lalitha", 0); return; }
+            if (!saved) { 
+                addMember("Shravan", 0); addMember("Lalitha", 0); addMember("Pavan", 0); addMember("Pavani", 0); addMember("Rajya Lakhsmi", 0); 
+                return; 
+            }
             const data = JSON.parse(saved);
             document.getElementById('exp').value = data.exp;
             document.getElementById('reinvestRate').value = data.reinvest;
             document.getElementById('sipRet').value = data.sipRet;
             document.getElementById('infRet').value = data.infRet;
             document.getElementById('adjToggle').checked = data.adj;
+            document.getElementById('memberList').innerHTML = "";
             data.members.forEach(m => addMember(m.n, parseFloat(m.s.replace(/,/g,''))));
+            document.getElementById('assetBody').innerHTML = "";
             data.assets.forEach(a => addRow(a.n, parseFloat(a.p.replace(/,/g,'')), parseFloat(a.y), a.o));
             calculate();
         }
